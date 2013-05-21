@@ -1,8 +1,26 @@
 (function () {
     "use strict";
 
-    var express, corser, mongo, app;
+    var argv, express, corser, mongo, app;
 
+    argv = require("optimist")
+             .options("port", {
+                 default: 1337,
+                 describe: "Port"
+              })
+             .options("mongodb-host", {
+                 default: "127.0.0.1",
+                 describe: "MongoDB Host"
+              })
+             .options("mongodb-port", {
+                 default: "27017",
+                 describe: "MongoDB Port"
+              })
+             .options("mongodb-database", {
+                 demand: true,
+                 describe: "MongoDB Database"
+              })
+             .argv;
     express = require("express");
     corser = require("corser");
     mongo = require("mongodb");
@@ -28,7 +46,7 @@
     app.use(function (req, res, next) {
         (express.basicAuth(function (username, password, callback) {
             var client;
-            client = new mongo.Db("test", new mongo.Server("127.0.0.1", 27017), {w: "majority"});
+            client = new mongo.Db(argv["mongodb-database"], new mongo.Server(argv["mongodb-host"], argv["mongodb-port"]), {w: "majority"});
             client.open(function (err, db) {
                 db.authenticate(username, password, function (err) {
                     if (err !== null) {
@@ -106,6 +124,6 @@
         res.send(500, "Something broke!");
     });
 
-    app.listen(1337);
+    app.listen(argv.port);
 
 }());
