@@ -77,11 +77,16 @@
                 collection.findOne({
                     _id: id
                 }, function (err, item) {
-                    res.send(item);
+                    if (item === null) {
+                        res.send(404, "Not Found");
+                    } else {
+                        res.send(item);
+                    }
                     req.db.close();
                 });
             } catch (e) {
-                next(e);
+                res.send(404, "Not Found");
+                req.db.close();
             }
         });
     });
@@ -109,12 +114,17 @@
                 id = new mongo.ObjectID(itemParam);
                 collection.remove({
                     _id: new mongo.ObjectID(itemParam)
-                }, function () {
-                    res.send(200, "Deleted");
+                }, function (err, num) {
+                    if (num === 0) {
+                        res.send(404, "Not Found");
+                    } else {
+                        res.send(200, "Deleted");
+                    }
                     req.db.close();
                 });
             } catch (e) {
-                next(e);
+                res.send(404, "Not Found");
+                req.db.close();
             }
         });
     });
