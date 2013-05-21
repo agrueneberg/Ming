@@ -100,6 +100,7 @@
     });
 
     app.use(function(err, req, res, next){
+        req.db.close();
         res.send(500, "Something broke!");
     });
 
