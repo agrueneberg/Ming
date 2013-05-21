@@ -11,7 +11,8 @@
 
  // Handle CORS
     app.use(corser.create({
-        methods: ["GET", "POST", "DELETE"]
+        methods: corser.simpleMethods.concat(["DELETE"]),
+        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"])
     }));
     app.use(function (req, res, next) {
         if (req.method === "OPTIONS") {
@@ -22,67 +23,79 @@
         }
     });
 
+ // Basic auth.
+    app.use(function (req, res, next) {
+        (express.basicAuth(function (username, password, callback) {
+            var client;
+            client = new mongo.Db("test", new mongo.Server("127.0.0.1", 27017), {w: "majority"});
+            client.open(function (err, db) {
+                db.authenticate(username, password, function (err) {
+                    if (err !== null) {
+                     // Close database if authentication fails
+                        db.close();
+                        callback(err, null);
+                    } else {
+                     // Store reference to database in req.db
+                        req.db = db;
+                        callback(null, username);
+                    }
+                });
+            });
+        }, "MongoDB"))(req, res, next);
+    });
+
  // Parse JSON.
     app.use(express.json());
 
     app.get("/:collection/:item", function (req, res, next) {
-        var collectionParam, itemParam, client;
+        var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
-        client = new mongo.Db("test", new mongo.Server("127.0.0.1", 27017), {w: "majority"});
-        client.open(function (err, pDb) {
-            pDb.collection(collectionParam, function (err, pCollection) {
-                var id;
-                try {
-                    id = new mongo.ObjectID(itemParam);
-                    pCollection.findOne({
-                        _id: id
-                    }, function (err, item) {
-                        res.send(item);
-                        pDb.close();
-                    });
-                } catch (e) {
-                    next(e);
-                }
-            });
+        req.db.collection(collectionParam, function (err, collection) {
+            var id;
+            try {
+                id = new mongo.ObjectID(itemParam);
+                collection.findOne({
+                    _id: id
+                }, function (err, item) {
+                    res.send(item);
+                    req.db.close();
+                });
+            } catch (e) {
+                next(e);
+            }
         });
     });
 
     app.post("/:collection", function (req, res) {
-        var collectionParam, payload, client;
+        var collectionParam, payload;
         collectionParam = req.params.collection;
         payload = req.body;
-        client = new mongo.Db("test", new mongo.Server("127.0.0.1", 27017), {w: "majority"});
-        client.open(function (err, pDb) {
-            pDb.collection(collectionParam, function (err, pCollection) {
-                pCollection.insert(payload, function () {
-                    res.send(201, "Created");
-                    pDb.close();
-                });
+        req.db.collection(collectionParam, function (err, collection) {
+            collection.insert(payload, function () {
+                res.send(201, "Created");
+                req.db.close();
             });
         });
     });
 
     app.delete("/:collection/:item", function (req, res, next) {
-        var collectionParam, itemParam, client;
+        var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
-        client = new mongo.Db("test", new mongo.Server("127.0.0.1", 27017), {w: "majority"});
-        client.open(function (err, pDb) {
-            pDb.collection(collectionParam, function (err, pCollection) {
-                var id;
-                try {
-                    id = new mongo.ObjectID(itemParam);
-                    pCollection.remove({
-                        _id: new mongo.ObjectID(itemParam)
-                    }, function () {
-                        res.send(200, "Deleted");
-                        pDb.close();
-                    });
-                } catch (e) {
-                    next(e);
-                }
-            });
+        req.db.collection(collectionParam, function (err, collection) {
+            var id;
+            try {
+                id = new mongo.ObjectID(itemParam);
+                collection.remove({
+                    _id: new mongo.ObjectID(itemParam)
+                }, function () {
+                    res.send(200, "Deleted");
+                    req.db.close();
+                });
+            } catch (e) {
+                next(e);
+            }
         });
     });
 
