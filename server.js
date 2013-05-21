@@ -12,7 +12,8 @@
  // Handle CORS
     app.use(corser.create({
         methods: corser.simpleMethods.concat(["DELETE"]),
-        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"])
+        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
+        responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
     }));
     app.use(function (req, res, next) {
         if (req.method === "OPTIONS") {
@@ -72,7 +73,8 @@
         collectionParam = req.params.collection;
         payload = req.body;
         req.db.collection(collectionParam, function (err, collection) {
-            collection.insert(payload, function () {
+            collection.insert(payload, {safe: true}, function (err, item) {
+                res.location(collectionParam + "/" + item[0]._id.toHexString());
                 res.send(201, "Created");
                 req.db.close();
             });
