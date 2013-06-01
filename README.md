@@ -43,6 +43,9 @@ Examples
     xhr.setRequestHeader("Authorization", "Basic " + btoa("username:password"));
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(payload));
+    xhr.onload = function () {
+        console.log("Created resource at", xhr.getResponseHeader("Location"));
+    };
 
 ### Delete
 
