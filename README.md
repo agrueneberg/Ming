@@ -1,6 +1,8 @@
 Ming
 ====
 
+A Quasi-RESTful Web Service for MongoDB.
+
 Installation
 ------------
 
