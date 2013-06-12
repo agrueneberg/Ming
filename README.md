@@ -14,6 +14,7 @@ Installation
 - Clone it
 - Run `npm install`
 - Run `node server.js` (see Usage)
+- Put an SSL-enabled proxy in front of it
 
 Usage
 -----
