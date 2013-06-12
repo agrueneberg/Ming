@@ -24,33 +24,44 @@ Usage
 - `mongodb-port`: MongoDB port
 - `mongodb-database`: MongoDB database
 
-Examples
---------
+Browser Client
+--------------
+
+### Embed Client
+
+    <script src="myDeployment/client.js"></script>
+
+### Connect to Ming
+
+    db = ming({
+        endpoint: "myDeployment",
+        username: "myUsername",
+        password: "myPassword"
+    });
 
 ### Read
 
-    xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:1337/test/519a9b237f837c9ea78155de");
-    xhr.setRequestHeader("Authorization", "Basic " + btoa("username:password"));
-    xhr.send(null);
+    db.collection("myCollection", function (err, collection) {
+        collection.findOne("myId", function (err, item) {
+            console.log(item);
+        });
+    });
 
 ### Create
 
-    payload = {
+    item = {
         name: "Ming"
     };
-    xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:1337/test");
-    xhr.setRequestHeader("Authorization", "Basic " + btoa("username:password"));
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(payload));
-    xhr.onload = function () {
-        console.log("Created resource at", xhr.getResponseHeader("Location"));
-    };
+    db.collection("myCollection", function (err, collection) {
+        collection.insert(item, function (err, response) {
+            console.log(response.id);
+        });
+    });
 
 ### Delete
 
-    xhr = new XMLHttpRequest();
-    xhr.open("DELETE", "http://localhost:1337/test/519a9b237f837c9ea78155de");
-    xhr.setRequestHeader("Authorization", "Basic " + btoa("username:password"));
-    xhr.send(null);
+    db.collection("myCollection", function (err, collection) {
+        collection.remove("myId", function (err) {
+            console.log("Deleted");
+        });
+    });
