@@ -47,6 +47,26 @@ Browser Client
         });
     });
 
+### Query
+
+    db.collection("myCollection", function (err, collection) {
+        collection.find({
+            name: "Ming"
+        }, function (err, items) {
+            console.log(items);
+        });
+    });
+
+    db.collection("myCollection", function (err, collection) {
+        collection.find({}, {
+            sort: "name",
+            limit: 2,
+            skip: 2
+        }, function (err, items) {
+            console.log(items);
+        });
+    });
+
 ### Create
 
     item = {
