@@ -4,9 +4,18 @@
     var ajax, ming;
 
     ajax = function (options, callback) {
-        var xhr;
+        var xhr, url;
         xhr = new XMLHttpRequest();
-        xhr.open(options.method, options.url);
+        url = options.url;
+        Object.keys(options.params || {}).forEach(function (param, i) {
+            if (i === 0) {
+                url += "?";
+            } else {
+                url += "&";
+            }
+            url += param + "=" + encodeURIComponent(options.params[param]);
+        });
+        xhr.open(options.method, url);
         if (options.username && options.password) {
             xhr.setRequestHeader("Authorization", "Basic " + btoa(options.username + ":" + options.password));
         }
@@ -55,6 +64,27 @@
         return {
             collection: function (collection, callback) {
                 callback(null, {
+                    find: function (query, opts, callback) {
+                        if (typeof opts === "function") {
+                            callback = opts;
+                            opts = {};
+                        }
+                        ajax({
+                            method: "POST",
+                            url: options.endpoint + "/" + collection + "/query",
+                            params: opts,
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(query),
+                            username: options.username,
+                            password: options.password
+                        }, function (err, res) {
+                            var items;
+                            items = JSON.parse(res.body);
+                            callback(err, items);
+                        });
+                    },
                     findOne: function (id, callback) {
                         ajax({
                             method: "GET",
@@ -78,7 +108,6 @@
                             username: options.username,
                             password: options.password
                         }, function (err, res) {
-                            console.log(res.headers.location);
                             callback(err, {
                                 id: res.headers.location.substring(("/" + collection + "/").length, res.headers.location.length)
                             });
