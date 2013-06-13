@@ -66,6 +66,28 @@
  // Parse JSON.
     app.use(express.json());
 
+    app.post("/:collection/query", function (req, res, next) {
+        var collectionParam;
+        collectionParam = req.params.collection;
+        req.db.collection(collectionParam, function (err, collection) {
+            var options;
+            options = {};
+            if (req.query.limit) {
+                options.limit = req.query.limit;
+            }
+            if (req.query.skip) {
+                options.skip = req.query.skip;
+            }
+            if (req.query.sort) {
+                options.sort = req.query.sort;
+            }
+            collection.find(req.body, options).toArray(function (err, items) {
+                res.send(items);
+                req.db.close();
+            });
+        });
+    });
+
     app.get("/:collection/:item", function (req, res, next) {
         var collectionParam, itemParam;
         collectionParam = req.params.collection;
