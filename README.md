@@ -24,6 +24,10 @@ Usage
 - `mongodb-port`: MongoDB port (default *27017*)
 - `mongodb-database`: MongoDB database (required)
 
+### Example
+
+    node server.js --mongodb-database test
+
 Browser Client
 --------------
 
