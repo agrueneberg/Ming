@@ -158,4 +158,6 @@
 
     app.listen(argv.port);
 
+    console.log("Ming is running on port", argv.port);
+
 }());
