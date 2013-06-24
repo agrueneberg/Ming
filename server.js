@@ -161,6 +161,12 @@
         });
     });
 
+ // Catch-all.
+    app.use(function (req, res) {
+        req.db.close();
+        res.send(404, "Not Found");
+    });
+
  // Error handler.
     app.use(function (err, req, res, next) {
         req.db.close();
