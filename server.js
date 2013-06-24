@@ -17,7 +17,7 @@
                  describe: "MongoDB Port"
               })
              .options("mongodb-database", {
-                 demand: true,
+                 default: "ming",
                  describe: "MongoDB Database"
               })
              .argv;

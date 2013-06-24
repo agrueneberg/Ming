@@ -22,7 +22,7 @@ Usage
 - `port`: Server port (default *1337*)
 - `mongodb-host`: MongoDB host (default *127.0.0.1*)
 - `mongodb-port`: MongoDB port (default *27017*)
-- `mongodb-database`: MongoDB database (required)
+- `mongodb-database`: MongoDB database (default *ming*)
 
 ### Example
 
