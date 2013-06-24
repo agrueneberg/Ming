@@ -179,6 +179,6 @@
 
     app.listen(argv.port);
 
-    console.log("Ming is running on port", argv.port);
+    console.log("Ming is running on port " + argv.port + ", connected to mongodb://" + argv["mongodb-host"] + ":" + argv["mongodb-port"] + "/" + argv["mongodb-database"]);
 
 }());
