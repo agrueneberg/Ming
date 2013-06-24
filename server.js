@@ -27,7 +27,7 @@
 
     app = express();
 
- // Handle CORS
+ // Handle CORS.
     app.use(corser.create({
         methods: corser.simpleMethods.concat(["DELETE"]),
         requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
@@ -66,7 +66,7 @@
  // Parse JSON.
     app.use(express.json());
 
-    app.post("/:collection/query", function (req, res, next) {
+    app.post("/:collection/query", function (req, res) {
         var collectionParam;
         collectionParam = req.params.collection;
         req.db.collection(collectionParam, function (err, collection) {
@@ -88,7 +88,7 @@
         });
     });
 
-    app.get("/:collection/:item", function (req, res, next) {
+    app.get("/:collection/:item", function (req, res) {
         var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
@@ -126,7 +126,7 @@
         });
     });
 
-    app.delete("/:collection/:item", function (req, res, next) {
+    app.delete("/:collection/:item", function (req, res) {
         var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
@@ -151,7 +151,8 @@
         });
     });
 
-    app.use(function(err, req, res, next){
+ // Error handler.
+    app.use(function (err, req, res, next) {
         req.db.close();
         res.send(500, "Something broke!");
     });
