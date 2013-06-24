@@ -169,7 +169,9 @@
 
  // Error handler.
     app.use(function (err, req, res, next) {
-        req.db.close();
+        if (req.hasOwnProperty("db") === true) {
+            req.db.close();
+        }
         res.send(500, "Internal Server Error");
     });
 
