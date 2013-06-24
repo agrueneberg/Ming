@@ -42,25 +42,35 @@
         }
     });
 
+ // Prepare MongoDB client.
+    app.use(function (req, res, next) {
+        var client;
+        client = new mongo.Db(argv["mongodb-database"], new mongo.Server(argv["mongodb-host"], argv["mongodb-port"]), {w: "majority"});
+        client.open(function (err, db) {
+            if (err !== null) {
+                next(err);
+            } else {
+                req.db = db;
+                next();
+            }
+        });
+    });
+
  // Basic auth.
     app.use(function (req, res, next) {
-        (express.basicAuth(function (username, password, callback) {
-            var client;
-            client = new mongo.Db(argv["mongodb-database"], new mongo.Server(argv["mongodb-host"], argv["mongodb-port"]), {w: "majority"});
-            client.open(function (err, db) {
-                db.authenticate(username, password, function (err) {
-                    if (err !== null) {
-                     // Close database if authentication fails
-                        db.close();
-                        callback(err, null);
-                    } else {
-                     // Store reference to database in req.db
-                        req.db = db;
-                        callback(null, username);
-                    }
-                });
+        var basicAuth;
+        basicAuth = express.basicAuth(function (username, password, callback) {
+            req.db.authenticate(username, password, function (err) {
+                if (err !== null) {
+                 // Close database if authentication fails.
+                    req.db.close();
+                    callback(err, null);
+                } else {
+                    callback(null, username);
+                }
             });
-        }, "MongoDB"))(req, res, next);
+        }, "MongoDB");
+        basicAuth(req, res, next);
     });
 
  // Parse JSON.
