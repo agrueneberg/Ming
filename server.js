@@ -98,7 +98,7 @@
         });
     });
 
-    app.get("/:collection/:item", function (req, res) {
+    app.get("/:collection/:item", function (req, res, next) {
         var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
@@ -110,15 +110,16 @@
                     _id: id
                 }, function (err, item) {
                     if (item === null) {
-                        res.send(404, "Not Found");
+                     // Route to catch-all.
+                        next();
                     } else {
                         res.send(item);
                     }
                     req.db.close();
                 });
             } catch (e) {
-                res.send(404, "Not Found");
-                req.db.close();
+             // Route to catch-all.
+                next();
             }
         });
     });
@@ -136,7 +137,7 @@
         });
     });
 
-    app.delete("/:collection/:item", function (req, res) {
+    app.delete("/:collection/:item", function (req, res, next) {
         var collectionParam, itemParam;
         collectionParam = req.params.collection;
         itemParam = req.params.item;
@@ -148,15 +149,16 @@
                     _id: new mongo.ObjectID(itemParam)
                 }, function (err, num) {
                     if (num === 0) {
-                        res.send(404, "Not Found");
+                     // Route to catch-all.
+                        next();
                     } else {
                         res.send(200, "Deleted");
                     }
                     req.db.close();
                 });
             } catch (e) {
-                res.send(404, "Not Found");
-                req.db.close();
+             // Route to catch-all.
+                next();
             }
         });
     });
