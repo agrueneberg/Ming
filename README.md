@@ -32,3 +32,11 @@ Clients
 -------
 
 - [Ming Fu](https://bitbucket.org/agrueneberg/ming-fu)
+
+API
+---
+
+- `GET /:collection/:document` retrieve document
+- `POST /:collection/query` query documents
+- `POST /:collection` create document
+- `DELETE /:collection/:document` delete document
