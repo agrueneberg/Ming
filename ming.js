@@ -91,29 +91,29 @@
             if (req.query.sort) {
                 options.sort = req.query.sort;
             }
-            collection.find(req.body, options).toArray(function (err, items) {
-                res.send(items);
+            collection.find(req.body, options).toArray(function (err, documents) {
+                res.send(documents);
                 req.db.close();
             });
         });
     });
 
-    app.get("/:collection/:item", function (req, res, next) {
-        var collectionParam, itemParam;
+    app.get("/:collection/:document", function (req, res, next) {
+        var collectionParam, documentParam;
         collectionParam = req.params.collection;
-        itemParam = req.params.item;
+        documentParam = req.params.document;
         req.db.collection(collectionParam, function (err, collection) {
             var id;
             try {
-                id = new mongo.ObjectID(itemParam);
+                id = new mongo.ObjectID(documentParam);
                 collection.findOne({
                     _id: id
-                }, function (err, item) {
-                    if (item === null) {
+                }, function (err, document) {
+                    if (document === null) {
                      // Route to catch-all.
                         next();
                     } else {
-                        res.send(item);
+                        res.send(document);
                     }
                     req.db.close();
                 });
@@ -129,24 +129,24 @@
         collectionParam = req.params.collection;
         payload = req.body;
         req.db.collection(collectionParam, function (err, collection) {
-            collection.insert(payload, {safe: true}, function (err, item) {
-                res.location(collectionParam + "/" + item[0]._id.toHexString());
+            collection.insert(payload, {safe: true}, function (err, document) {
+                res.location(collectionParam + "/" + document[0]._id.toHexString());
                 res.send(201, "Created");
                 req.db.close();
             });
         });
     });
 
-    app.delete("/:collection/:item", function (req, res, next) {
-        var collectionParam, itemParam;
+    app.delete("/:collection/:document", function (req, res, next) {
+        var collectionParam, documentParam;
         collectionParam = req.params.collection;
-        itemParam = req.params.item;
+        documentParam = req.params.document;
         req.db.collection(collectionParam, function (err, collection) {
             var id;
             try {
-                id = new mongo.ObjectID(itemParam);
+                id = new mongo.ObjectID(documentParam);
                 collection.remove({
-                    _id: new mongo.ObjectID(itemParam)
+                    _id: new mongo.ObjectID(documentParam)
                 }, function (err, num) {
                     if (num === 0) {
                      // Route to catch-all.
