@@ -36,6 +36,7 @@ Clients
 API
 ---
 
+- `GET /` retrieve collection names
 - `GET /:collection/:document` retrieve document
 - `POST /:collection/query` query documents
 - `POST /:collection` create document

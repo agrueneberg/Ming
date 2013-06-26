@@ -76,6 +76,22 @@
  // Parse JSON.
     app.use(express.json());
 
+    app.get("/", function (req, res) {
+        req.db.collectionNames({
+            namesOnly: true
+        }, function (err, collections) {
+            var names;
+            names = collections.map(function (collection) {
+             // Strip database name.
+                return collection.substring(argv["mongodb-database"].length + 1, collection.length);
+            });
+            res.send({
+                collections: names
+            });
+            req.db.close();
+        });
+    });
+
     app.post("/:collection/query", function (req, res) {
         var collectionParam;
         collectionParam = req.params.collection;
