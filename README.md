@@ -13,7 +13,7 @@ Installation
 
 - Clone it
 - Run `npm install`
-- Run `node server.js` (see Usage)
+- Run `node ming.js` (see Usage)
 - Put an SSL-enabled proxy in front of it
 
 Usage
@@ -26,7 +26,7 @@ Usage
 
 ### Example
 
-    node server.js --mongodb-database test
+    node ming.js --mongodb-database test
 
 Clients
 -------
