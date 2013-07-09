@@ -140,6 +140,17 @@
         });
     });
 
+    app.get("/:collection", function (req, res) {
+        var collectionParam;
+        collectionParam = req.params.collection;
+        req.db.collection(collectionParam, function (err, collection) {
+            collection.find().count(function (err, count) {
+                res.send({count: count});
+                req.db.close();
+            });
+        });
+    });
+
     app.post("/:collection", function (req, res) {
         var collectionParam, payload;
         collectionParam = req.params.collection;

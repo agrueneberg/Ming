@@ -39,5 +39,6 @@ API
 - `GET /` retrieve collection names
 - `GET /:collection/:document` retrieve document
 - `POST /:collection/query` query documents
+- `GET /:collection` retrieve collection statistics
 - `POST /:collection` create document
 - `DELETE /:collection/:document` delete document
