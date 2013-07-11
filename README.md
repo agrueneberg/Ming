@@ -19,14 +19,12 @@ Installation
 Usage
 -----
 
-- `port`: Server port (default *1337*)
-- `mongodb-host`: MongoDB host (default *127.0.0.1*)
-- `mongodb-port`: MongoDB port (default *27017*)
-- `mongodb-database`: MongoDB database (default *ming*)
+- `port`: Ming Server port (default *1337*)
+- `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default database connection (default *mongodb://localhost/test*)
 
 ### Example
 
-    node ming.js --mongodb-database test
+    node ming.js --connection-string mongodb://mymongoserver/mymongodb
 
 Clients
 -------
@@ -36,9 +34,16 @@ Clients
 API
 ---
 
+### Routes
+
 - `GET /` retrieve collection names
 - `GET /:collection/:document` retrieve document
 - `POST /:collection/query` query documents
 - `GET /:collection` retrieve collection statistics
 - `POST /:collection` create document
 - `DELETE /:collection/:document` delete document
+
+### Headers
+
+- `Authorization` basic HTTP authorization (e.g. in JavaScript `"Authorization : Basic " + btoa(username + ":" + password)`)
+- `X-Connection-String` MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the current request
