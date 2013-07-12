@@ -1,27 +1,20 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, mongo, app;
+    var argv, express, corser, mongo, app, url;
 
     argv = require("optimist")
              .options("port", {
                  default: 1337,
                  describe: "Port"
-              })
-             .options("mongodb-host", {
-                 default: "127.0.0.1",
-                 describe: "MongoDB Host"
-              })
-             .options("mongodb-port", {
-                 default: "27017",
-                 describe: "MongoDB Port"
-              })
-             .options("mongodb-database", {
-                 default: "ming",
-                 describe: "MongoDB Database"
-              })
+             })
+             .options("connection-string", {
+                 default: "mongodb://localhost/test",
+                 describe: "Connection String URI for initial MongoDB instance."
+             })
              .argv;
     express = require("express");
+    url = require("url");
     corser = require("corser");
     mongo = require("mongodb");
 
@@ -30,7 +23,7 @@
  // Handle CORS.
     app.use(corser.create({
         methods: corser.simpleMethods.concat(["DELETE"]),
-        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
+        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
         responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
     }));
     app.use(function (req, res, next) {
@@ -44,9 +37,10 @@
 
  // Prepare MongoDB client.
     app.use(function (req, res, next) {
-        var client;
-        client = new mongo.Db(argv["mongodb-database"], new mongo.Server(argv["mongodb-host"], argv["mongodb-port"]), {w: "majority"});
-        client.open(function (err, db) {
+        var connectionStringURI;
+        connectionStringURI = req.headers["x-connection-string"] || argv["connection-string"];
+        req.connectionStringURI = url.parse(connectionStringURI);
+        mongo.MongoClient.connect(connectionStringURI, {native_parser: true}, function (err, db) {
             if (err !== null) {
                 next(err);
             } else {
@@ -83,7 +77,7 @@
             var names;
             names = collections.map(function (collection) {
              // Strip database name.
-                return collection.substring(argv["mongodb-database"].length + 1, collection.length);
+                return collection.substring(req.connectionStringURI.path.length);
             });
             res.send({
                 collections: names
@@ -206,6 +200,6 @@
 
     app.listen(argv.port);
 
-    console.log("Ming is running on port " + argv.port + ", connected to mongodb://" + argv["mongodb-host"] + ":" + argv["mongodb-port"] + "/" + argv["mongodb-database"]);
+    console.log("Ming is running on port " + argv.port + ", connected to " + argv["connection-string"]);
 
 }());
