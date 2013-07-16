@@ -40,7 +40,7 @@
         var connectionStringURI;
         connectionStringURI = req.headers["x-connection-string"] || argv["connection-string"];
         req.connectionStringURI = url.parse(connectionStringURI);
-        mongo.MongoClient.connect(connectionStringURI, {native_parser: true}, function (err, db) {
+        mongo.MongoClient.connect(connectionStringURI, function (err, db) {
             if (err !== null) {
                 next(err);
             } else {
