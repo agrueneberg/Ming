@@ -9,7 +9,7 @@
                  describe: "Port"
              })
              .options("connection-string", {
-                 default: "mongodb://localhost/test",
+                 default: "mongodb://localhost/ming",
                  describe: "Connection String URI for initial MongoDB instance."
              })
              .argv;
