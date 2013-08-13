@@ -12,6 +12,10 @@
                  default: "mongodb://localhost/ming",
                  describe: "MongoDB Connection String for the default deployment."
              })
+             .options("enable-proxying", {
+                 default: false,
+                 describe: "Allow connections to other MongoDB deployments."
+             })
              .argv;
     express = require("express");
     url = require("url");
@@ -38,7 +42,11 @@
  // Prepare MongoDB client.
     app.use(function (req, res, next) {
         var connectionStringURI;
-        connectionStringURI = req.headers["x-connection-string"] || argv["connection-string"];
+        if (argv["enable-proxying"] === true && req.headers.hasOwnProperty("x-connection-string") === true) {
+            connectionStringURI = req.headers["x-connection-string"];
+        } else {
+            connectionStringURI = argv["connection-string"];
+        }
         req.connectionStringURI = url.parse(connectionStringURI);
         mongo.MongoClient.connect(connectionStringURI, function (err, db) {
             if (err !== null) {
