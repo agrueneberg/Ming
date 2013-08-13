@@ -20,7 +20,7 @@ Usage
 -----
 
 - `port`: Ming Server port (default *1337*)
-- `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default database connection (default *mongodb://localhost/test*)
+- `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default deployment (default *mongodb://localhost/ming*)
 
 ### Example
 

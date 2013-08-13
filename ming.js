@@ -10,7 +10,7 @@
              })
              .options("connection-string", {
                  default: "mongodb://localhost/ming",
-                 describe: "Connection String URI for initial MongoDB instance."
+                 describe: "MongoDB Connection String for the default deployment."
              })
              .argv;
     express = require("express");
