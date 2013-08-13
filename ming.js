@@ -41,14 +41,14 @@
 
  // Prepare MongoDB client.
     app.use(function (req, res, next) {
-        var connectionStringURI;
+        var connectionString;
         if (argv["enable-proxying"] === true && req.headers.hasOwnProperty("x-connection-string") === true) {
-            connectionStringURI = req.headers["x-connection-string"];
+            connectionString = req.headers["x-connection-string"];
         } else {
-            connectionStringURI = argv["connection-string"];
+            connectionString = argv["connection-string"];
         }
-        req.connectionStringURI = url.parse(connectionStringURI);
-        mongo.MongoClient.connect(connectionStringURI, function (err, db) {
+        req.connectionString = url.parse(connectionString);
+        mongo.MongoClient.connect(connectionString, function (err, db) {
             if (err !== null) {
                 next(err);
             } else {
@@ -85,7 +85,7 @@
             var names;
             names = collections.map(function (collection) {
              // Strip database name.
-                return collection.substring(req.connectionStringURI.path.length);
+                return collection.substring(req.connectionString.path.length);
             });
             res.send({
                 collections: names
