@@ -21,7 +21,7 @@ Usage
 
 - `port`: Ming Server port (default *1337*)
 - `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default deployment (default *mongodb://localhost/ming*)
-- `enable-proxying`: Allow connections to other MongoDB instances (see `X-Connection-String` header).
+- `enable-proxying`: Allow connections to other MongoDB instances (see `X-Connection-String` header, default *false*).
 
 ### Example
 
