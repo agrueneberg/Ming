@@ -158,7 +158,7 @@
         collectionParam = req.params.collection;
         payload = req.body;
         req.db.collection(collectionParam, function (err, collection) {
-            collection.insert(payload, {safe: true}, function (err, document) {
+            collection.insert(payload, function (err, document) {
                 res.location(collectionParam + "/" + document[0]._id.toHexString());
                 res.send(201, "Created");
                 req.db.close();
