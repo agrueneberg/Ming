@@ -175,7 +175,7 @@
             try {
                 id = new mongo.ObjectID(documentParam);
                 collection.remove({
-                    _id: new mongo.ObjectID(documentParam)
+                    _id: id
                 }, function (err, num) {
                     if (num === 0) {
                      // Route to catch-all.
