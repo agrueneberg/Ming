@@ -116,6 +116,17 @@
         });
     });
 
+    app.get("/:collection", function (req, res) {
+        var collectionParam;
+        collectionParam = req.params.collection;
+        req.db.collection(collectionParam, function (err, collection) {
+            collection.find().count(function (err, count) {
+                res.send({count: count});
+                req.db.close();
+            });
+        });
+    });
+
     app.get("/:collection/:document", function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
@@ -139,17 +150,6 @@
              // Route to catch-all.
                 next();
             }
-        });
-    });
-
-    app.get("/:collection", function (req, res) {
-        var collectionParam;
-        collectionParam = req.params.collection;
-        req.db.collection(collectionParam, function (err, collection) {
-            collection.find().count(function (err, count) {
-                res.send({count: count});
-                req.db.close();
-            });
         });
     });
 
