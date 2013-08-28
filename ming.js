@@ -153,6 +153,37 @@
         });
     });
 
+    app.get("/:collection/:document/:field", function (req, res, next) {
+        var collectionParam, documentParam, fieldParam;
+        collectionParam = req.params.collection;
+        documentParam = req.params.document;
+        fieldParam = req.params.field;
+        req.db.collection(collectionParam, function (err, collection) {
+            var id, fields;
+            try {
+                id = new mongo.ObjectID(documentParam);
+                fields = {};
+                fields[fieldParam] = 1;
+                collection.findOne({
+                    _id: id
+                }, {
+                    fields: fields
+                }, function (err, document) {
+                    if (document === null || document.hasOwnProperty(fieldParam) === false) {
+                     // Route to catch-all.
+                        next();
+                    } else {
+                        res.send(document[fieldParam]);
+                    }
+                    req.db.close();
+                });
+            } catch (e) {
+             // Route to catch-all.
+                next();
+            }
+        });
+    });
+
     app.post("/:collection", function (req, res) {
         var collectionParam, payload;
         collectionParam = req.params.collection;
