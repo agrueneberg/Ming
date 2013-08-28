@@ -94,28 +94,6 @@
         });
     });
 
-    app.post("/:collection/query", function (req, res) {
-        var collectionParam;
-        collectionParam = req.params.collection;
-        req.db.collection(collectionParam, function (err, collection) {
-            var options;
-            options = {};
-            if (req.query.limit) {
-                options.limit = req.query.limit;
-            }
-            if (req.query.skip) {
-                options.skip = req.query.skip;
-            }
-            if (req.query.sort) {
-                options.sort = req.query.sort;
-            }
-            collection.find(req.body, options).toArray(function (err, documents) {
-                res.send(documents);
-                req.db.close();
-            });
-        });
-    });
-
     app.get("/:collection", function (req, res) {
         var collectionParam;
         collectionParam = req.params.collection;
@@ -181,6 +159,28 @@
              // Route to catch-all.
                 next();
             }
+        });
+    });
+
+    app.post("/:collection/query", function (req, res) {
+        var collectionParam;
+        collectionParam = req.params.collection;
+        req.db.collection(collectionParam, function (err, collection) {
+            var options;
+            options = {};
+            if (req.query.limit) {
+                options.limit = req.query.limit;
+            }
+            if (req.query.skip) {
+                options.skip = req.query.skip;
+            }
+            if (req.query.sort) {
+                options.sort = req.query.sort;
+            }
+            collection.find(req.body, options).toArray(function (err, documents) {
+                res.send(documents);
+                req.db.close();
+            });
         });
     });
 
