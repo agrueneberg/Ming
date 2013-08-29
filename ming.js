@@ -130,10 +130,16 @@
                         if (req.query.hasOwnProperty("binary") === true && req.query.binary === "true") {
                             grid = new mongo.Grid(req.db, prefixParam);
                             grid.get(id, function (err, file) {
-                                var fileType;
-                             // Guess file type from file extension.
-                                fileType = document.filename.match(/(\.\w+)$/)[1];
-                                res.type(fileType);
+                                var contentType;
+                                if (document.contentType) {
+                                    contentType = document.contentType;
+                                } else if (document.filename) {
+                                 // Guess file type from file extension.
+                                    contentType = document.filename.match(/(\.\w+)$/)[1];
+                                } else {
+                                    contentType = "application/octet-stream";
+                                }
+                                res.type(contentType);
                                 res.send(file);
                                 req.db.close();
                             });
