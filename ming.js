@@ -262,6 +262,24 @@
         });
     });
 
+    app.delete("/:prefix.files/:file", function (req, res, next) {
+        var prefixParam, fileParam, grid, id;
+        prefixParam = req.params.prefix;
+        fileParam = req.params.file;
+        grid = new mongo.Grid(req.db, prefixParam);
+        try {
+            id = new mongo.ObjectID(fileParam);
+            grid.delete(id, function (err, flag) {
+             // TODO: Detect if file was actually deleted.
+                res.send(200, "OK");
+                req.db.close();
+            });
+        } catch (e) {
+         // Route to catch-all.
+            next();
+        }
+    });
+
     app.delete("/:collection/:document", function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;

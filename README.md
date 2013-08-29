@@ -47,6 +47,7 @@ API
 - `POST /:collection` create document
 - `POST /:prefix.files` create file
 - `DELETE /:collection/:document` delete document
+- `DELETE /:prefix.files/:file` delete file
 
 ### Headers
 
