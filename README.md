@@ -41,6 +41,8 @@ API
 - `GET /:collection` retrieve collection statistics
 - `GET /:collection/:document` retrieve document
 - `GET /:collection/:document/:field` retrieve field of document
+- `GET /:prefix.files/:file` retrieve metadata of file
+- `GET /:prefix.files/:file?binary=true` retrieve contents of file
 - `POST /:collection/query` query documents
 - `POST /:collection` create document
 - `DELETE /:collection/:document` delete document

@@ -105,6 +105,46 @@
         });
     });
 
+    app.get("/:prefix.files/:file", function (req, res, next) {
+        var prefixParam, fileParam;
+        prefixParam = req.params.prefix;
+        fileParam = req.params.file;
+        req.db.collection(prefixParam + ".files", function (err, collection) {
+            var id;
+            try {
+                id = new mongo.ObjectID(fileParam);
+             // Get metadata first.
+                collection.findOne({
+                    _id: id
+                }, function (err, document) {
+                    var grid;
+                    if (document === null) {
+                     // Route to catch-all.
+                        next();
+                    } else {
+                        if (req.query.hasOwnProperty("binary") === true && req.query.binary === "true") {
+                            grid = new mongo.Grid(req.db, prefixParam);
+                            grid.get(id, function (err, file) {
+                                var fileType;
+                             // Guess file type from file extension.
+                                fileType = document.filename.match(/(\.\w+)$/)[1];
+                                res.type(fileType);
+                                res.send(file);
+                                req.db.close();
+                            });
+                        } else {
+                            res.send(document);
+                            req.db.close();
+                        }
+                    }
+                });
+            } catch (e) {
+             // Route to catch-all.
+                next();
+            }
+        });
+    });
+
     app.get("/:collection/:document", function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
