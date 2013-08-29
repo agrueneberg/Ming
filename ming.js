@@ -75,9 +75,6 @@
         basicAuth(req, res, next);
     });
 
- // Parse JSON.
-    app.use(express.json());
-
     app.get("/", function (req, res) {
         req.db.collectionNames({
             namesOnly: true
@@ -202,7 +199,7 @@
         });
     });
 
-    app.post("/:collection/query", function (req, res) {
+    app.post("/:collection/query", express.json(), function (req, res) {
         var collectionParam;
         collectionParam = req.params.collection;
         req.db.collection(collectionParam, function (err, collection) {
@@ -224,7 +221,7 @@
         });
     });
 
-    app.post("/:collection", function (req, res) {
+    app.post("/:collection", express.json(), function (req, res) {
         var collectionParam, payload;
         collectionParam = req.params.collection;
         payload = req.body;
