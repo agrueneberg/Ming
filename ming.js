@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, mongo, app, url;
+    var argv, express, corser, mongo, url, app;
 
     argv = require("optimist")
              .options("port", {
@@ -18,9 +18,9 @@
              })
              .argv;
     express = require("express");
-    url = require("url");
     corser = require("corser");
     mongo = require("mongodb");
+    url = require("url");
 
     app = express();
 
