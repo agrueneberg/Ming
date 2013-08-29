@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, mongo, url, app;
+    var argv, express, corser, mongo, url, binaryBodyParser, app;
 
     argv = require("optimist")
              .options("port", {
@@ -21,6 +21,22 @@
     corser = require("corser");
     mongo = require("mongodb");
     url = require("url");
+
+    binaryBodyParser = function (req, res, next) {
+        var body;
+        body = new Buffer(0);
+        req.on("data", function (chunk) {
+            var buffer;
+            buffer = new Buffer(body.length + chunk.length);
+            body.copy(buffer);
+            chunk.copy(buffer, body.length);
+            body = buffer;
+        });
+        req.on("end", function () {
+            req.body = body;
+            next();
+        });
+    };
 
     app = express();
 
@@ -210,6 +226,20 @@
                 res.send(documents);
                 req.db.close();
             });
+        });
+    });
+
+    app.post("/:prefix.files", binaryBodyParser, function (req, res, next) {
+        var prefixParam, contentType, grid;
+        prefixParam = req.params.prefix;
+        contentType = req.headers["content-type"];
+        grid = new mongo.Grid(req.db, prefixParam);
+        grid.put(req.body, {
+            content_type: contentType
+        }, function (err, document) {
+            res.location(prefixParam + ".files/" + document._id.toHexString());
+            res.send(201, "Created");
+            req.db.close();
         });
     });
 

@@ -45,6 +45,7 @@ API
 - `GET /:prefix.files/:file?binary=true` retrieve contents of file
 - `POST /:collection/query` query documents
 - `POST /:collection` create document
+- `POST /:prefix.files` create file
 - `DELETE /:collection/:document` delete document
 
 ### Headers
