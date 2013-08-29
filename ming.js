@@ -30,14 +30,6 @@
         requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
         responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
     }));
-    app.use(function (req, res, next) {
-        if (req.method === "OPTIONS") {
-            res.writeHead(204);
-            res.end();
-        } else {
-            next();
-        }
-    });
 
  // Prepare MongoDB client.
     app.use(function (req, res, next) {
@@ -258,6 +250,12 @@
                 next();
             }
         });
+    });
+
+ // Terminate CORS preflights.
+    app.options("*", function (req, res, next) {
+        res.writeHead(204);
+        res.end();
     });
 
  // Catch-all.
