@@ -142,7 +142,7 @@
                             next(err);
                         } else {
                             if (document === null) {
-                             // Route to catch-all.
+                             // Route to 404 handler.
                                 next();
                             } else {
                                 if (req.query.hasOwnProperty("binary") === true && req.query.binary === "true") {
@@ -173,7 +173,7 @@
                         }
                     });
                 } catch (e) {
-                 // Route to catch-all.
+                 // Route to 404 handler.
                     next();
                 }
             }
@@ -198,7 +198,7 @@
                             next(err);
                         } else {
                             if (document === null) {
-                             // Route to catch-all.
+                             // Route to 404 handler.
                                 next();
                             } else {
                                 res.send(document);
@@ -207,7 +207,7 @@
                         }
                     });
                 } catch (e) {
-                 // Route to catch-all.
+                 // Route to 404 handler.
                     next();
                 }
             }
@@ -237,7 +237,7 @@
                             next(err);
                         } else {
                             if (document === null || document.hasOwnProperty(fieldParam) === false) {
-                             // Route to catch-all.
+                             // Route to 404 handler.
                                 next();
                             } else {
                                 res.send(document[fieldParam]);
@@ -246,7 +246,7 @@
                         }
                     });
                 } catch (e) {
-                 // Route to catch-all.
+                 // Route to 404 handler.
                     next();
                 }
             }
@@ -344,7 +344,7 @@
                         }
                     });
                 } catch (e) {
-                 // Route to catch-all.
+                 // Route to 404 handler.
                     next();
                 }
             }
@@ -368,7 +368,7 @@
                 }
             });
         } catch (e) {
-         // Route to catch-all.
+         // Route to 404 handler.
             next();
         }
     });
@@ -391,7 +391,7 @@
                             next(err);
                         } else {
                             if (num === 0) {
-                             // Route to catch-all.
+                             // Route to 404 handler.
                                 next();
                             } else {
                                 res.send(200, "Deleted");
@@ -400,7 +400,7 @@
                         }
                     });
                 } catch (e) {
-                 // Route to catch-all.
+                 // Route to 404 handler.
                     next();
                 }
             }
@@ -413,13 +413,13 @@
         res.end();
     });
 
- // Catch-all.
+ // 404 handler.
     app.use(function (req, res) {
         req.db.close();
         res.send(404, "Not Found");
     });
 
- // Error handler.
+ // 500 handler.
     app.use(function (err, req, res, next) {
         if (req.hasOwnProperty("db") === true) {
             req.db.close();
