@@ -262,6 +262,27 @@
         });
     });
 
+    app.patch("/:collection/:document", express.json(), function (req, res, next) {
+        var collectionParam, documentParam;
+        collectionParam = req.params.collection;
+        documentParam = req.params.document;
+        req.db.collection(collectionParam, function (err, collection) {
+            var id;
+            try {
+                id = new mongo.ObjectID(documentParam);
+                collection.update({
+                    _id: id
+                }, req.body, function (err) {
+                    res.send(204, "No Content");
+                    req.db.close();
+                });
+            } catch (e) {
+             // Route to catch-all.
+                next();
+            }
+        });
+    });
+
     app.delete("/:prefix.files/:file", function (req, res, next) {
         var prefixParam, fileParam, grid, id;
         prefixParam = req.params.prefix;
