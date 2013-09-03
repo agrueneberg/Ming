@@ -42,7 +42,7 @@
 
  // Handle CORS.
     app.use(corser.create({
-        methods: corser.simpleMethods.concat(["DELETE"]),
+        methods: corser.simpleMethods.concat(["DELETE", "PATCH"]),
         requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
         responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
     }));
