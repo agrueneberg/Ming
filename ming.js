@@ -47,6 +47,16 @@
         responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
     }));
 
+ // Terminate CORS preflights.
+    app.use(function (req, res, next) {
+        if (req.method === "OPTIONS") {
+            res.writeHead(204);
+            res.end();
+        } else {
+            next();
+        }
+    });
+
  // Prepare MongoDB client.
     app.use(function (req, res, next) {
         var connectionString;
@@ -405,12 +415,6 @@
                 }
             }
         });
-    });
-
- // Terminate CORS preflights.
-    app.options("*", function (req, res, next) {
-        res.writeHead(204);
-        res.end();
     });
 
  // 404 handler.
