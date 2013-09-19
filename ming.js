@@ -66,8 +66,12 @@
             } else {
                 connectionString = argv["connection-string"];
             }
-            req.connectionString = url.parse(connectionString);
-            mongo.MongoClient.connect(connectionString, function (err, db) {
+            connectionString = url.parse(connectionString, true);
+         // Keep connection pool small.
+            connectionString.query.maxPoolSize = 1;
+         // Keep a reference to the connection string for later use.
+            req.connectionString = connectionString;
+            mongo.MongoClient.connect(url.format(connectionString), function (err, db) {
                 if (err !== null) {
                     next(err);
                 } else {
