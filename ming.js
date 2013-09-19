@@ -40,57 +40,78 @@
 
     app = express();
 
- // Handle CORS.
-    app.use(corser.create({
-        methods: corser.simpleMethods.concat(["DELETE", "PATCH"]),
-        requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
-        responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
-    }));
+    app.configure(function () {
 
- // Terminate CORS preflights.
-    app.use(function (req, res, next) {
-        if (req.method === "OPTIONS") {
-            res.writeHead(204);
-            res.end();
-        } else {
-            next();
-        }
-    });
+     // Handle CORS.
+        app.use(corser.create({
+            methods: corser.simpleMethods.concat(["DELETE", "PATCH"]),
+            requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
+            responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
+        }));
 
- // Prepare MongoDB client.
-    app.use(function (req, res, next) {
-        var connectionString;
-        if (argv["enable-proxying"] === true && req.headers.hasOwnProperty("x-connection-string") === true) {
-            connectionString = req.headers["x-connection-string"];
-        } else {
-            connectionString = argv["connection-string"];
-        }
-        req.connectionString = url.parse(connectionString);
-        mongo.MongoClient.connect(connectionString, function (err, db) {
-            if (err !== null) {
-                next(err);
+     // Terminate CORS preflights.
+        app.use(function (req, res, next) {
+            if (req.method === "OPTIONS") {
+                res.writeHead(204);
+                res.end();
             } else {
-                req.db = db;
                 next();
             }
         });
-    });
 
- // Basic auth.
-    app.use(function (req, res, next) {
-        var basicAuth;
-        basicAuth = express.basicAuth(function (username, password, callback) {
-            req.db.authenticate(username, password, function (err) {
+     // Prepare MongoDB client.
+        app.use(function (req, res, next) {
+            var connectionString;
+            if (argv["enable-proxying"] === true && req.headers.hasOwnProperty("x-connection-string") === true) {
+                connectionString = req.headers["x-connection-string"];
+            } else {
+                connectionString = argv["connection-string"];
+            }
+            req.connectionString = url.parse(connectionString);
+            mongo.MongoClient.connect(connectionString, function (err, db) {
                 if (err !== null) {
-                 // Close database if authentication fails.
-                    req.db.close();
-                    callback(err, null);
+                    next(err);
                 } else {
-                    callback(null, username);
+                    req.db = db;
+                    next();
                 }
             });
-        }, "MongoDB");
-        basicAuth(req, res, next);
+        });
+
+     // Basic auth.
+        app.use(function (req, res, next) {
+            var basicAuth;
+            basicAuth = express.basicAuth(function (username, password, callback) {
+                req.db.authenticate(username, password, function (err) {
+                    if (err !== null) {
+                     // Close database if authentication fails.
+                        req.db.close();
+                        callback(err, null);
+                    } else {
+                        callback(null, username);
+                    }
+                });
+            }, "MongoDB");
+            basicAuth(req, res, next);
+        });
+
+     // Deploy routes.
+        app.use(app.router);
+
+     // 404 handler.
+        app.use(function (req, res) {
+            req.db.close();
+            res.send(404, "Not Found");
+        });
+
+     // 500 handler.
+        app.use(function (err, req, res, next) {
+            if (req.hasOwnProperty("db") === true) {
+                req.db.close();
+            }
+            res.send(500, "Internal Server Error");
+        });
+
     });
 
     app.get("/", function (req, res) {
@@ -415,20 +436,6 @@
                 }
             }
         });
-    });
-
- // 404 handler.
-    app.use(function (req, res) {
-        req.db.close();
-        res.send(404, "Not Found");
-    });
-
- // 500 handler.
-    app.use(function (err, req, res, next) {
-        if (req.hasOwnProperty("db") === true) {
-            req.db.close();
-        }
-        res.send(500, "Internal Server Error");
     });
 
     app.listen(argv.port);
