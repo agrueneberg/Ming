@@ -123,7 +123,7 @@
             } else {
                 names = collections.map(function (collection) {
                  // Strip database name.
-                    return collection.substring(req.connectionString.path.length);
+                    return collection.substring(req.connectionString.pathname.length);
                 });
                 res.send({
                     collections: names
