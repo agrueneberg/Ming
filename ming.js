@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, mongo, url, binaryBodyParser, app;
+    var argv, express, corser, mongo, url, basicAuth, binaryBodyParser, app;
 
     argv = require("optimist")
              .options("port", {
@@ -21,6 +21,42 @@
     corser = require("corser");
     mongo = require("mongodb");
     url = require("url");
+
+ // Connect's basicAuth is not flexible enough: it doesn't allow you to
+ // overwrite unauthorized, needed to close the connection to MongoDB.
+    basicAuth = function (req, res, next) {
+        var authorization, parts, scheme, credentials, index, user, pass;
+        authorization = req.headers.authorization;
+        if (authorization === undefined) {
+            req.db.close();
+            res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
+            res.send(401, "Unauthorized");
+        } else {
+            parts = authorization.split(" ");
+            if (parts.length !== 2) {
+                next(new Error());
+            } else {
+                scheme = parts[0];
+                credentials = new Buffer(parts[1], "base64").toString();
+                index = credentials.indexOf(":");
+                if (scheme !== "Basic" || index < 0) {
+                    next(utils.error(400));
+                } else {
+                    user = credentials.slice(0, index);
+                    pass = credentials.slice(index + 1);
+                    req.db.authenticate(user, pass, function (err) {
+                        if (err !== null) {
+                            req.db.close();
+                            res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
+                            res.send(401, "Unauthorized");
+                        } else {
+                            next();
+                        }
+                    });
+                }
+            }
+        }
+    };
 
     binaryBodyParser = function (req, res, next) {
         var body;
@@ -82,21 +118,7 @@
         });
 
      // Basic auth.
-        app.use(function (req, res, next) {
-            var basicAuth;
-            basicAuth = express.basicAuth(function (username, password, callback) {
-                req.db.authenticate(username, password, function (err) {
-                    if (err !== null) {
-                     // Close database if authentication fails.
-                        req.db.close();
-                        callback(err, null);
-                    } else {
-                        callback(null, username);
-                    }
-                });
-            }, "MongoDB");
-            basicAuth(req, res, next);
-        });
+        app.use(basicAuth);
 
      // Deploy routes.
         app.use(app.router);
