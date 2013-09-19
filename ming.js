@@ -52,8 +52,7 @@
      // Terminate CORS preflights.
         app.use(function (req, res, next) {
             if (req.method === "OPTIONS") {
-                res.writeHead(204);
-                res.end();
+                res.send(204);
             } else {
                 next();
             }
