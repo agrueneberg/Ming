@@ -6,7 +6,7 @@ A Quasi-RESTful Web Service for MongoDB.
 Status
 ------
 
-Just an experiment. It probably won't make you happy. Move along, there is nothing to see here.
+Experimental, not well tested.
 
 Installation
 ------------
