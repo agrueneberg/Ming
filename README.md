@@ -24,7 +24,7 @@ Usage
 
 ### Example
 
-    node ming.js --connection-string mongodb://mymongoserver/mymongodb
+    ming --connection-string mongodb://mymongoserver/mymongodb
 
 Clients
 -------
