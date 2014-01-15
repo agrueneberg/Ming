@@ -1,19 +1,17 @@
 {
     "name": "ming",
-    "description": "A Quasi-RESTful Web Service for MongoDB.",
     "version": "0.1.0",
-    "author": {
-        "name": "Alexander Grüneberg",
-        "email": "alexander.grueneberg@googlemail.com"
-    },
+    "description": "A Quasi-RESTful Web Service for MongoDB.",
+    "bugs": "https://bitbucket.org/agrueneberg/ming/issues",
+    "license": "MIT",
+    "author": "Alexander Grüneberg <alexander.grueneberg@googlemail.com>",
     "repository": {
         "type": "git",
-        "url": "https://bitbucket.org/agrueneberg/ming"
+        "url": "https://bitbucket.org/agrueneberg/ming.git"
     },
-    "licenses": [{
-        "type": "The MIT License",
-        "url": "http://www.opensource.org/licenses/mit-license.php"
-    }],
+    "scripts": {
+        "start": "node ming.js"
+    },
     "dependencies": {
         "optimist": "~0.5.0",
         "express": "~3.2.4",
@@ -22,8 +20,5 @@
     },
     "engines": {
         "node": ">= 0.8.0"
-    },
-    "scripts": {
-        "start": "node ming.js"
     }
 }
