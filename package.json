@@ -5,12 +5,10 @@
     "bugs": "https://bitbucket.org/agrueneberg/ming/issues",
     "license": "MIT",
     "author": "Alexander Grüneberg <alexander.grueneberg@googlemail.com>",
+    "bin": "./ming.js",
     "repository": {
         "type": "git",
         "url": "https://bitbucket.org/agrueneberg/ming.git"
-    },
-    "scripts": {
-        "start": "node ming.js"
     },
     "dependencies": {
         "optimist": "~0.5.0",

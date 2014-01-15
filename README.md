@@ -11,9 +11,8 @@ Experimental, not well tested.
 Installation
 ------------
 
-- Clone it
-- Run `npm install`
-- Run `node ming.js` (see Usage)
+- Run `sudo npm install ming -g`
+- Run `ming` (see Usage)
 - Put an SSL-enabled proxy in front of it
 
 Usage
