@@ -14,10 +14,6 @@
                  default: "mongodb://localhost/ming",
                  describe: "MongoDB Connection String for the default deployment."
              })
-             .options("enable-proxying", {
-                 default: false,
-                 describe: "Allow connections to other MongoDB deployments."
-             })
              .argv;
     express = require("express");
     corser = require("corser");
@@ -83,7 +79,7 @@
      // Handle CORS.
         app.use(corser.create({
             methods: corser.simpleMethods.concat(["DELETE", "PATCH"]),
-            requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "X-Connection-String"]),
+            requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
             responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
         }));
 
@@ -99,12 +95,7 @@
      // Prepare MongoDB client.
         app.use(function (req, res, next) {
             var connectionString;
-            if (argv["enable-proxying"] === true && req.headers.hasOwnProperty("x-connection-string") === true) {
-                connectionString = req.headers["x-connection-string"];
-            } else {
-                connectionString = argv["connection-string"];
-            }
-            connectionString = url.parse(connectionString, true);
+            connectionString = url.parse(argv["connection-string"], true);
          // Keep connection pool small.
             connectionString.query.maxPoolSize = 1;
          // Keep a reference to the connection string for later use.

@@ -20,7 +20,6 @@ Usage
 
 - `port`: Ming Server port (default *1337*)
 - `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default deployment (default *mongodb://localhost/ming*)
-- `enable-proxying`: Allow connections to other MongoDB instances (see `X-Connection-String` header, default *false*).
 
 ### Example
 
@@ -57,4 +56,3 @@ API
 ### Headers
 
 - `Authorization` basic HTTP authorization (e.g. in JavaScript `"Authorization : Basic " + btoa(username + ":" + password)`)
-- `X-Connection-String` MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the current request
