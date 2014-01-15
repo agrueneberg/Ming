@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, auth, mongo, url, Q, connectionString, getDatabase, binaryBodyParser, app;
+    var argv, express, corser, auth, rawBody, mongo, url, Q, connectionString, getDatabase, app;
 
     argv = require("optimist")
              .options("port", {
@@ -19,6 +19,7 @@
     corser = require("corser");
     auth = require("basic-auth");
     mongo = require("mongodb");
+    rawBody = require("raw-body");
     url = require("url");
     Q = require("q");
 
@@ -34,22 +35,6 @@
             }
         });
         return deferred.promise;
-    };
-
-    binaryBodyParser = function (req, res, next) {
-        var body;
-        body = new Buffer(0);
-        req.on("data", function (chunk) {
-            var buffer;
-            buffer = new Buffer(body.length + chunk.length);
-            body.copy(buffer);
-            chunk.copy(buffer, body.length);
-            body = buffer;
-        });
-        req.on("end", function () {
-            req.body = body;
-            next();
-        });
     };
 
     app = express();
@@ -323,7 +308,16 @@
         });
     });
 
-    app.post("/:prefix.files", binaryBodyParser, function (req, res, next) {
+    app.post("/:prefix.files", function (req, res, next) {
+        rawBody(req, function (err, buffer) {
+            if (err !== null) {
+                next(err);
+            } else {
+                req.body = buffer;
+                next();
+            }
+        });
+    }, function (req, res, next) {
         var prefixParam, contentType, grid;
         prefixParam = req.params.prefix;
         contentType = req.headers["content-type"];
