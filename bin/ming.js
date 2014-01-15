@@ -123,7 +123,7 @@
 
     });
 
-    app.get("/", function (req, res) {
+    app.get("/", function (req, res, next) {
         req.db.collectionNames({
             namesOnly: true
         }, function (err, collections) {
@@ -143,7 +143,7 @@
         });
     });
 
-    app.get("/:collection", function (req, res) {
+    app.get("/:collection", function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
         req.db.collection(collectionParam, function (err, collection) {
