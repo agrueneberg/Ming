@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, auth, mongo, url, binaryBodyParser, app;
+    var argv, express, corser, auth, mongo, url, Q, connectionString, getDatabase, binaryBodyParser, app;
 
     argv = require("optimist")
              .options("port", {
@@ -20,6 +20,21 @@
     auth = require("basic-auth");
     mongo = require("mongodb");
     url = require("url");
+    Q = require("q");
+
+    connectionString = url.parse(argv["connection-string"], true);
+
+    getDatabase = function () {
+        var deferred = Q.defer();
+        mongo.MongoClient.connect(url.format(connectionString), function (err, db) {
+            if (err !== null) {
+                deferred.reject(err);
+            } else {
+                deferred.resolve(db);
+            }
+        });
+        return deferred.promise;
+    };
 
     binaryBodyParser = function (req, res, next) {
         var body;
@@ -57,21 +72,13 @@
             }
         });
 
-     // Prepare MongoDB client.
+     // Prepare database for this request.
         app.use(function (req, res, next) {
-            var connectionString;
-            connectionString = url.parse(argv["connection-string"], true);
-         // Keep connection pool small.
-            connectionString.query.maxPoolSize = 1;
-         // Keep a reference to the connection string for later use.
-            req.connectionString = connectionString;
-            mongo.MongoClient.connect(url.format(connectionString), function (err, db) {
-                if (err !== null) {
-                    next(err);
-                } else {
-                    req.db = db;
-                    next();
-                }
+            getDatabase().then(function (db) {
+                req.db = db;
+                next();
+            }, function (err) {
+                next(err);
             });
         });
 
@@ -126,7 +133,7 @@
             } else {
                 names = collections.map(function (collection) {
                  // Strip database name.
-                    return collection.substring(req.connectionString.pathname.length);
+                    return collection.substring(connectionString.pathname.length);
                 });
                 res.send({
                     collections: names
