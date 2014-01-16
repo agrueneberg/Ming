@@ -98,7 +98,7 @@
             res.send(404, "Not Found");
         });
 
-     // 500 handler.
+     // 500 handler (signature must not be changed).
         app.use(function (err, req, res, next) {
             if (req.hasOwnProperty("db") === true) {
                 req.db.close();
@@ -278,7 +278,7 @@
         });
     });
 
-    app.post("/:collection/query", express.json(), function (req, res) {
+    app.post("/:collection/query", express.json(), function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
         req.db.collection(collectionParam, function (err, collection) {
@@ -335,7 +335,7 @@
         });
     });
 
-    app.post("/:collection", express.json(), function (req, res) {
+    app.post("/:collection", express.json(), function (req, res, next) {
         var collectionParam, payload;
         collectionParam = req.params.collection;
         payload = req.body;
