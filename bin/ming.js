@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, auth, rawBody, mongo, url, Q, connectionString, getDatabase, app;
+    var argv, express, corser, auth, rawBody, mongo, Q, getDatabase, app;
 
     argv = require("optimist")
              .options("port", {
@@ -20,14 +20,11 @@
     auth = require("basic-auth");
     mongo = require("mongodb");
     rawBody = require("raw-body");
-    url = require("url");
     Q = require("q");
-
-    connectionString = url.parse(argv["connection-string"], true);
 
     getDatabase = function () {
         var deferred = Q.defer();
-        mongo.MongoClient.connect(url.format(connectionString), function (err, db) {
+        mongo.MongoClient.connect(argv["connection-string"], function (err, db) {
             if (err !== null) {
                 deferred.reject(err);
             } else {
@@ -118,7 +115,7 @@
             } else {
                 names = collections.map(function (collection) {
                  // Strip database name.
-                    return collection.substring(connectionString.pathname.length);
+                    return collection.substring(collection.indexOf(".") + 1);
                 });
                 res.send({
                     collections: names
