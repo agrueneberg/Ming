@@ -5,6 +5,7 @@
     "bugs": "https://bitbucket.org/agrueneberg/ming/issues",
     "license": "MIT",
     "author": "Alexander Grüneberg <alexander.grueneberg@googlemail.com>",
+    "main": "./lib/ming.js",
     "bin": "./bin/ming.js",
     "repository": {
         "type": "git",
