@@ -7,7 +7,7 @@
 
     argv = require("optimist")
              .options("port", {
-                 default: 1337,
+                 default: 27080,
                  describe: "Port"
              })
              .options("connection-string", {
