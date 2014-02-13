@@ -18,7 +18,7 @@ Installation
 Usage
 -----
 
-- `port`: Ming Server port (default *1337*)
+- `port`: Ming Server port (default *27080*)
 - `connection-string`: MongoDB [Connection String](http://docs.mongodb.org/manual/reference/connection-string/) for the default deployment (default *mongodb://localhost/ming*)
 
 ### Example
